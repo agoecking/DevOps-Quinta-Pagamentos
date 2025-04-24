@@ -27,6 +27,15 @@ def registrar_pagamento():
         if not produto:
             return jsonify({"erro": "Produto não encontrado"}), 404
 
+        # Verificar se o valor inserido é menor que o preço do produto
+        if float(valor) < float(produto["preco"]):
+            return jsonify({"erro": "Valor inserido é menor que o preço do produto"}), 400
+
+        # Se o valor for maior que o preço, calcular o troco
+        if float(valor) > float(produto["preco"]):
+            troco = float(valor) - float(produto["preco"])
+            return jsonify({"mensagem": f"Pagamento processado. Devolver troco de {troco:.2f}"}), 200
+        
         payload = {
             "id_produto": id_produto,
             "nome_produto": produto["nome"],
