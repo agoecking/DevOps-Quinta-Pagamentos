@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
+from flask import send_from_directory
 import requests
+import os
 
 app = Flask(__name__)
 
@@ -35,7 +37,7 @@ def registrar_pagamento():
         if float(valor) > float(produto["preco"]):
             troco = float(valor) - float(produto["preco"])
             return jsonify({"mensagem": f"Pagamento processado. Devolver troco de {troco:.2f}"}), 200
-        
+
         payload = {
             "id_produto": id_produto,
             "nome_produto": produto["nome"],
@@ -54,9 +56,14 @@ def registrar_pagamento():
         return jsonify({"erro": str(e)}), 500
 
 
+
 @app.route("/api-flask/pagamentos", methods=["GET"])
 def listar_pagamentos():
     return jsonify(registros_pagamento)
 
+@app.route("/")
+def servir_html():
+    return send_from_directory(os.path.join(app.root_path, "template"), "index.html")
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5050)
